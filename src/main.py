@@ -1,5 +1,4 @@
 import os
-import sys
 import ctypes
 import requests
 import shutil
@@ -7,6 +6,7 @@ import zipfile
 import subprocess
 import time
 import psutil
+import sys
 
 def is_admin():
     try:
@@ -104,30 +104,36 @@ def run_update():
         steam_path = get_user_steam_path()
 
         if steam_path:
-            print("Downloading latest version of the Lethal Company Modpack.\n")
+            print("Downloading latest version of the Lethal Company Modpack.")
             download_latest_release(steam_path)
+            
+            print("Checking for existing BepInEx files.")
+            backbone_api_src = os.path.join(steam_path, 'assets', 'backbone_api')
+            backbone_api_dest = os.path.join(steam_path, 'BepInEx')
 
-            print("Moving BepInEx files to root directory.\n")
-            backbone_api_src = os.path.join(steam_path, 'assets\\backbone_api')
-            move_folder_contents(backbone_api_src, steam_path)
+            # Check if backbone_api files already exist in the root directory
+            if os.path.exists(backbone_api_dest):
+                print("Existing BepInEx files found. Skipping extraction.")
+            else:
+                print("Moving BepInEx files to root directory.")
+                move_folder_contents(backbone_api_src, steam_path)
 
-            print("Launching Lethal Company to generate core files.\n")
-            lethal_company_exe_path = os.path.join(steam_path, 'Lethal Company.exe')
-            launch_and_wait(lethal_company_exe_path)
+                print("Launching Lethal Company to generate core files.\n")
+                lethal_company_exe_path = os.path.join(steam_path, 'Lethal Company.exe')
+                launch_and_wait(lethal_company_exe_path)
 
-            print("Terminating Lethal Company process after 30 seconds.")
-            terminate_process("Lethal Company.exe")
+                # print("Terminating Lethal Company process after 30 seconds.")
+                # terminate_process("Lethal Company.exe")
+                print("Modifying BepInEx configuration file to set the HideManagerGameObject variable to true.")
+                bepinex_cfg_path = os.path.join(steam_path, 'BepInEx', 'config', 'BepInEx.cfg')
+                replace_line_in_file(bepinex_cfg_path, 'HideManagerGameObject = false', 'HideManagerGameObject = true')
 
-            print("Modifying BepInEx configuration file to set the HideManagerGameObject variable to true.\n")
-            bepinex_cfg_path = os.path.join(steam_path, 'BepInEx', 'config', 'BepInEx.cfg')
-            replace_line_in_file(bepinex_cfg_path, 'HideManagerGameObject = false', 'HideManagerGameObject = true')
-
-            print("Moving plugin files to plugin directory located in the BepInEx directory.\n")
-            mods_src = os.path.join(steam_path, 'assets\\mods')
+            print("Moving plugin files to plugin directory located in the BepInEx directory.")
+            mods_src = os.path.join(steam_path, 'assets', 'mods')
             plugins_dest = os.path.join(steam_path, 'BepInEx', 'plugins')
             move_folder_contents(mods_src, plugins_dest)
 
-            print("Removing temporary files.\n")
+            print("Removing temporary files.")
             asset_dir = os.path.join(steam_path, 'assets')
             shutil.rmtree(asset_dir)
 
