@@ -158,6 +158,7 @@ class UpdateApp:
 
                     lethal_company_exe_path = os.path.join(steam_path, 'Lethal Company.exe')
                     self.launch_and_wait(lethal_company_exe_path)
+                    self.terminate_process("Lethal Company.exe")
 
                     bepinex_cfg_path = os.path.join(steam_path, 'BepInEx', 'config', 'BepInEx.cfg')
                     self.replace_line_in_file(bepinex_cfg_path, 'HideManagerGameObject = false', 'HideManagerGameObject = true')
