@@ -1,0 +1,19 @@
+# Virtual environment
+venv/
+
+# Compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# PyInstaller
+dist/
+build/
+*.spec
+
+# Temporary files
+temp_folder/
+
+# Ignore IDE files
+.vscode/
