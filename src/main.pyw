@@ -9,26 +9,28 @@ import psutil
 import sys
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import messagebox
 
 class UpdateApp:
     def __init__(self, master):
+        self.run_as_admin()
         self.master = master
-        master.title("Lethal Company Modpack Updater")
+        self.master.title("Lethal Company Modpack Updater")
 
         self.display_ascii_art()
+        
+        self.render_gui_fields()
 
-        self.text_area = tk.Text(master, height=20, width=60)
-        self.text_area.pack()
-
-        self.run_as_admin()
-        button_frame = tk.Frame(master)
+    def render_gui_fields(self):
+        button_width = 20
+        button_frame = tk.Frame(self.master)
         button_frame.pack(pady=10)
 
-        self.run_button = tk.Button(button_frame, text="Run Program", command=self.run_update)
-        self.run_button.pack(side=tk.RIGHT, padx=5)
-
-        self.close_button = tk.Button(button_frame, text="Close", command=self.close_app)
+        self.close_button = tk.Button(button_frame, text="Close", command=self.close_app, width=button_width)
         self.close_button.pack(side=tk.RIGHT, padx=5)
+
+        self.run_button = tk.Button(button_frame, text="Run Program", command=self.run_update, width=button_width)
+        self.run_button.pack(side=tk.RIGHT, padx=5)
 
     def is_admin(self):
         try:
@@ -65,22 +67,28 @@ class UpdateApp:
                     zip_ref.extractall(destination_path)
 
                 os.remove('latest_files.zip')
-
-                self.update_text("Download and extraction successful.")
             else:
-                self.update_text("No valid assets found in the release.")
+                self.show_error("No valid assets found in the release.")
 
         except requests.RequestException as e:
-            self.update_text(f"Error downloading latest release from GitHub: {e}")
+            self.show_error(f"Error downloading latest release from GitHub: {e}")
 
     def get_user_steam_path(self):
-        steam_path = filedialog.askdirectory(title="Select Steam Installation Directory")
+        steam_path = filedialog.askdirectory(title="Select Lethal Company Installation Directory")
         if os.path.exists(steam_path):
             return steam_path
         else:
-            self.update_text("Invalid path. Please make sure the path exists.")
+            self.show_error("Invalid path. Please make sure the path exists.")
             return None
 
+    def delete_folder_contents(seelf, folder_path):
+        for item in os.listdir(folder_path):
+            item_path = os.path.join(folder_path, item)
+            if os.path.isdir(item_path):
+                shutil.rmtree(item_path)
+            else:
+                os.remove(item_path)
+    
     def move_folder_contents(self, src_folder, dest_folder):
         for item in os.listdir(src_folder):
             s = os.path.join(src_folder, item)
@@ -91,19 +99,6 @@ class UpdateApp:
             else:
                 shutil.copy2(s, d)
                 os.remove(s)
-
-    def launch_and_wait(self, executable_path, wait_time_seconds=30):
-        try:
-            process = subprocess.Popen([executable_path], shell=True)
-            time.sleep(wait_time_seconds)
-            process.terminate()
-        except Exception as e:
-            self.update_text(f"Error launching {executable_path}: {e}")
-
-    def terminate_process(self, process_name):
-        for process in psutil.process_iter(['pid', 'name']):
-            if process.info['name'] == process_name:
-                psutil.Process(process.info['pid']).terminate()
 
     def replace_line_in_file(self, file_path, search_str, replace_str):
         with open(file_path, 'r') as file:
@@ -116,10 +111,8 @@ class UpdateApp:
                 else:
                     file.write(line)
 
-    def update_text(self, message):
-        current_text = self.text_area.get("1.0", tk.END)
-        self.text_area.delete("1.0", tk.END)
-        self.text_area.insert(tk.END, current_text + message + "\n")
+    def show_error(self, message):
+        messagebox.showerror("Error", message)
 
     def close_app(self):
         self.master.destroy()
@@ -133,8 +126,8 @@ class UpdateApp:
 /_____/\___/\__/_/ /_/\__,_/_/   \____/\____/_/ /_/ /_/ .___/\__,_/_/ /_/\__, /  
                                                      /_/                /____/   
 
-        Modpack by
-            Edward Nafornita
+Modpack by
+Edward Nafornita
         """
         ascii_label = tk.Label(self.master, text=ascii_art, font=("Courier", 10))
         ascii_label.pack()
@@ -142,42 +135,77 @@ class UpdateApp:
     def run_update(self):
         try:
             steam_path = self.get_user_steam_path()
-
             if steam_path:
                 self.download_latest_release(steam_path)
+                bepinex_dest_folder = os.path.join(steam_path, "BepInEx")
 
-                self.update_text("Checking for existing BepInEx files.")
-                backbone_api_src = os.path.join(steam_path, 'assets', 'backbone_api')
-                backbone_api_dest = os.path.join(steam_path, 'BepInEx')
-
-                if os.path.exists(backbone_api_dest):
-                    self.update_text("Existing BepInEx files found. Skipping extraction.")
+                if not os.path.exists(bepinex_dest_folder):
+                    self.update_steps = [
+                        (self.move_bepinex_files, [os.path.join(steam_path, 'assets', 'backbone_api'), steam_path]),
+                        (self.launch_lethal_company, [os.path.join(steam_path, 'Lethal Company.exe')]),
+                        (self.modify_bepinex_config, [os.path.join(steam_path, 'BepInEx', 'config', 'BepInEx.cfg')]),
+                        (self.move_mods, [os.path.join(steam_path, 'assets', 'mods'), os.path.join(steam_path, 'BepInEx', 'plugins')]),
+                        (self.remove_temp_files, [os.path.join(steam_path, 'assets')])
+                    ]
                 else:
-                    self.update_text("Moving BepInEx files to root directory.")
-                    self.move_folder_contents(backbone_api_src, steam_path)
+                    self.update_steps = [
+                        (self.delete_plugins_directory, [os.path.join(steam_path, 'BepInEx', 'plugins')]),
+                        (self.move_mods, [os.path.join(steam_path, 'assets', 'mods'), os.path.join(steam_path, 'BepInEx', 'plugins')]),
+                        (self.remove_temp_files, [os.path.join(steam_path, 'assets')])
+                    ]
 
-                    lethal_company_exe_path = os.path.join(steam_path, 'Lethal Company.exe')
-                    self.launch_and_wait(lethal_company_exe_path)
-                    self.terminate_process("Lethal Company.exe")
-
-                    bepinex_cfg_path = os.path.join(steam_path, 'BepInEx', 'config', 'BepInEx.cfg')
-                    self.replace_line_in_file(bepinex_cfg_path, 'HideManagerGameObject = false', 'HideManagerGameObject = true')
-
-                self.update_text("Moving plugin files to plugin directory located in the BepInEx directory.")
-                mods_src = os.path.join(steam_path, 'assets', 'mods')
-                plugins_dest = os.path.join(steam_path, 'BepInEx', 'plugins')
-                self.move_folder_contents(mods_src, plugins_dest)
-
-                self.update_text("Removing temporary files.")
-                asset_dir = os.path.join(steam_path, 'assets')
-                shutil.rmtree(asset_dir)
-
-                self.update_text("Update completed successfully.")
-            else:
-                self.update_text("Steam not found. Update aborted.")
-
+                self.master.after(100, self.check_update_progress, steam_path)
+            else: 
+                self.show_error("Steam not found. Update aborted.")
         except Exception as e:
-            self.update_text(f"An error occurred: {e}")
+            self.show_error(f"An error occurred: {e}")
+
+    def check_update_progress(self, steam_path):
+        if self.update_steps:
+            update_step, args = self.update_steps.pop(0)
+            update_step(*args)
+            self.master.after(100, self.check_update_progress, steam_path)
+        else:
+            self.show_message("Update completed successfully.")
+
+    def move_bepinex_files(self, src_folder, dest_folder):
+        if os.path.exists(os.path.join(dest_folder, 'BepInEx')):
+            self.show_message("Existing BepInEx files found. Skipping extraction.")
+        else:
+            self.move_folder_contents(src_folder, dest_folder)
+
+    def launch_lethal_company(self, executable_path):
+        self.show_message("Launching Lethal Company to generate core files.")
+        self.launch_and_wait(executable_path)
+        self.terminate_process("Lethal Company.exe")
+
+    def launch_and_wait(self, executable_path, wait_time_seconds=20):
+        try:
+            process = subprocess.Popen([executable_path], shell=True)
+            time.sleep(wait_time_seconds)
+            process.terminate()
+        except Exception as e:
+            self.show_error(f"Error launching {executable_path}: {e}")
+
+    def terminate_process(self, process_name):
+        for process in psutil.process_iter(['pid', 'name']):
+            if process.info['name'] == process_name:
+                psutil.Process(process.info['pid']).terminate()
+
+    def modify_bepinex_config(self, file_path):
+        self.replace_line_in_file(file_path, 'HideManagerGameObject = false', 'HideManagerGameObject = true')
+
+    def delete_plugins_directory(self, folder_path):
+        self.delete_folder_contents(folder_path)
+
+    def move_mods(self, src_folder, dest_folder):
+        self.move_folder_contents(src_folder, dest_folder)
+
+    def remove_temp_files(self, folder_path):
+        shutil.rmtree(folder_path)
+    
+    def show_message(self, message):
+        messagebox.showinfo("Info", message)
 
 # Create the main window
 if __name__ == "__main__":
