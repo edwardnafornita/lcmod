@@ -48,7 +48,7 @@ class UpdateApp:
         sys.exit()
 
     def download_latest_release(self, destination_path, headers=None):
-        github_api_url = "https://api.github.com/repos/edwardnafornita/lcmod/releases/133309022"
+        github_api_url = "https://api.github.com/repos/edwardnafornita/lcmod/releases/133473093"
 
         try:
             response = requests.get(github_api_url, headers=headers)
