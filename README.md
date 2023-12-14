@@ -1,6 +1,6 @@
 # Modded Lethal Company
 
-## Mod list: TBD
+## Mod list:
 
 - [BepInExPack by BepInEx](https://thunderstore.io/c/lethal-company/p/BepInEx/BepInExPack/)
 - [BetterItemScan by PopleZoo](https://thunderstore.io/c/lethal-company/p/PopleZoo/BetterItemScan/)
