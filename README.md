@@ -15,7 +15,6 @@
 - [FasterItemDropship](https://thunderstore.io/c/lethal-company/p/FlipMods/FasterItemDropship/)
 - [FlashlightToggle by Renegades](https://thunderstore.io/c/lethal-company/p/Renegades/FlashlightToggle/)
 - [FOV Adjust by Rozebud](https://thunderstore.io/c/lethal-company/p/Rozebud/FOV_Adjust/)
-- [HDLethalCompany by Sligili](https://thunderstore.io/c/lethal-company/p/Sligili/HDLethalCompany/)
 - [Helmet Cameras by RickArg](https://thunderstore.io/c/lethal-company/p/RickArg/Helmet_Cameras/)
 - [HideModLIst by Sv_Matt](https://thunderstore.io/c/lethal-company/p/Sv_Matt/HideModList/)
 - [HookGenPatcher by Evaisa](https://thunderstore.io/c/lethal-company/p/Evaisa/HookGenPatcher/)
