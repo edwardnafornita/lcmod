@@ -1,19 +1,29 @@
 # Modded Lethal Company
 
+## Installation
+
+1. Download the lcmod.exe
+2. Launch and allow administrative privileges
+3. Select your Lethal Company installation directory
+
 ## Mod list:
 
+- [AdditionalSuits by AlexCodesGames](https://thunderstore.io/c/lethal-company/p/AlexCodesGames/AdditionalSuits/)
 - [BepInExPack by BepInEx](https://thunderstore.io/c/lethal-company/p/BepInEx/BepInExPack/)
 - [BetterItemScan by PopleZoo](https://thunderstore.io/c/lethal-company/p/PopleZoo/BetterItemScan/)
 - [Coroner by EliteMasterEric](https://thunderstore.io/c/lethal-company/p/EliteMasterEric/Coroner/)
 - [FasterItemDropship](https://thunderstore.io/c/lethal-company/p/FlipMods/FasterItemDropship/)
 - [FlashlightToggle by Renegades](https://thunderstore.io/c/lethal-company/p/Renegades/FlashlightToggle/)
 - [FOV Adjust by Rozebud](https://thunderstore.io/c/lethal-company/p/Rozebud/FOV_Adjust/)
+- [HDLethalCompany by Sligili](https://thunderstore.io/c/lethal-company/p/Sligili/HDLethalCompany/)
 - [Helmet Cameras by RickArg](https://thunderstore.io/c/lethal-company/p/RickArg/Helmet_Cameras/)
 - [HideModLIst by Sv_Matt](https://thunderstore.io/c/lethal-company/p/Sv_Matt/HideModList/)
 - [HookGenPatcher by Evaisa](https://thunderstore.io/c/lethal-company/p/Evaisa/HookGenPatcher/)
 - [HullBreaker Company by Venterok](https://thunderstore.io/c/lethal-company/p/Venterok/HullBreaker_Company/)
 - [IntroTweaks by Owen3H](https://thunderstore.io/c/lethal-company/p/Owen3H/IntroTweaks/)
+- [ItemQuickSwitch by vasanex](https://thunderstore.io/c/lethal-company/p/vasanex/ItemQuickSwitch/)
 - [LateCompany by anormaltwig](https://thunderstore.io/c/lethal-company/p/anormaltwig/LateCompany/)
+- [Lategame Upgrades by malco](https://thunderstore.io/c/lethal-company/p/malco/Lategame_Upgrades/)
 - [LC API by 2018](https://thunderstore.io/c/lethal-company/p/2018/LC_API/)
 - [Lethal Escape by xCeezy](https://thunderstore.io/c/lethal-company/p/xCeezy/LethalEscape/)
 - [LethalLib by Evaisa](https://thunderstore.io/c/lethal-company/p/Evaisa/LethalLib/)
@@ -27,10 +37,3 @@
 - [VoiceHUD by 5Bit](https://thunderstore.io/c/lethal-company/p/5Bit/VoiceHUD/)
 - [WalkieUse by Renegades](https://thunderstore.io/c/lethal-company/p/Renegades/WalkieUse/)
 - [WeatherMultipliers by Blorb](https://thunderstore.io/c/lethal-company/p/Blorb/WeatherMultipliers/)
-
-## Installation
-
-1. Download the lcmod.exe
-2. Launch and allow administrative privileges
-3. Watch as the program installs all the files in the proper directories
-4. When you receive a success status message you know you've successfully modded Lethal Company
